@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Pareja Integrated School Digital Document Portal">
+<title>Pareja IS | Digital Document Portal</title>
+
+<style>
+:root{
+  --blue-950:#062a4d; --blue-900:#073b6b; --blue-800:#0b5394;
+  --blue-700:#1469ad; --blue-600:#1e7fc4; --blue-100:#eaf5ff;
+  --blue-50:#f6fbff; --ink:#17324d; --muted:#61758a; --white:#fff;
+  --line:#d9e8f5; --success:#16803c; --danger:#b42318;
+  --shadow:0 10px 28px rgba(7,59,107,.10); --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:var(--blue-50);line-height:1.55}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+button{cursor:pointer}
+.topbar{background:var(--blue-950);color:#fff;padding:9px 20px;font-size:.86rem}
+.topbar-inner,.nav-inner,.container{max-width:1180px;margin:auto}
+.topbar-inner{display:flex;justify-content:space-between;gap:12px}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.nav-inner{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 20px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800}
+.logo{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,var(--blue-700),var(--blue-950));color:#fff;display:grid;place-items:center;font-weight:900}
+.brand small{display:block;color:var(--muted);font-weight:600;font-size:.75rem}
+nav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+nav a{padding:9px 11px;border-radius:10px;font-weight:700;font-size:.9rem}
+nav a:hover,nav a:focus{background:var(--blue-100);color:var(--blue-900)}
+.menu{display:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px}
+.hero{background:linear-gradient(135deg,var(--blue-950),var(--blue-700));color:#fff;padding:56px 20px 62px}
+.hero-inner{max-width:1180px;margin:auto}
+.eyebrow{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;opacity:.82}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;margin:10px 0 16px;max-width:760px}
+.hero p{font-size:1.08rem;max-width:720px;opacity:.92}
+.search{margin-top:28px;display:flex;max-width:720px;background:#fff;border-radius:15px;padding:6px;box-shadow:var(--shadow)}
+.search input{flex:1;border:0;outline:0;padding:13px 14px;color:var(--ink);min-width:0}
+.search button,.primary{border:0;background:var(--blue-800);color:#fff;border-radius:11px;padding:12px 18px;font-weight:800}
+.search button:hover,.primary:hover{background:var(--blue-950)}
+main{padding:36px 20px 60px}
+.section{margin-bottom:42px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
+h2{margin:0;color:var(--blue-950);font-size:1.55rem}
+.section-head p{margin:4px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:.18s}
+.card:hover{transform:translateY(-2px);border-color:#b8d8ef}
+.icon{width:44px;height:44px;border-radius:13px;background:var(--blue-100);display:grid;place-items:center;font-size:1.35rem;margin-bottom:14px}
+.card h3{margin:0 0 6px;font-size:1.03rem}
+.card p{margin:0;color:var(--muted);font-size:.9rem}
+.quick .card{min-height:145px}
+.wide{grid-column:span 2}
+.requirements{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.req{position:relative}
+.tag{display:inline-block;font-size:.72rem;font-weight:800;border-radius:999px;background:var(--blue-100);color:var(--blue-900);padding:4px 8px;margin-bottom:10px}
+.req .meta{font-size:.82rem;color:var(--muted);margin:10px 0}
+.req .actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-secondary{border:1px solid var(--line);background:#fff;color:var(--blue-900);padding:9px 12px;border-radius:10px;font-weight:800}
+.btn-secondary:hover{background:var(--blue-50)}
+.notice{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue-600);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+.notice strong{color:var(--blue-950)}
+.admin{background:var(--blue-100);border:1px solid #c8e2f5;border-radius:var(--radius);padding:24px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+footer{background:var(--blue-950);color:#d9e8f5;padding:30px 20px}
+footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.modal{display:none;position:fixed;inset:0;background:rgba(3,27,49,.58);z-index:30;padding:20px;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:18px;max-width:620px;width:100%;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.22);max-height:90vh;overflow:auto}
+.modal-box h2{margin-bottom:8px}
+.close{float:right;border:0;background:var(--blue-100);border-radius:9px;padding:7px 10px}
+.hidden{display:none!important}
+.no-results{color:var(--muted);padding:16px 0}
+.status{margin-top:14px;padding:11px 13px;border-radius:10px;background:var(--blue-50);border:1px solid var(--line);font-size:.9rem}
+.status.success{background:#eefaf2;border-color:#b7e2c3;color:var(--success)}
+.status.error{background:#fff1f0;border-color:#f2b8b5;color:var(--danger)}
+.loading{opacity:.65;pointer-events:none}
+.user-badge{margin-top:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px 13px;max-width:720px}
+.user-badge strong{display:block}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{margin-top:14px}
+.form-field label{display:block;font-weight:800;margin-bottom:6px}
+.form-field input,.form-field select,.form-field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff;color:var(--ink)}
+.form-field textarea{min-height:90px;resize:vertical}
+.full{grid-column:1/-1}
+.submit-row{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.req-actions-note{font-size:.8rem;color:var(--muted);margin-top:7px}
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .requirements{grid-template-columns:repeat(2,1fr)}
+  nav{display:none}
+  .menu{display:block}
+  .nav-inner.open nav{display:flex;position:absolute;left:0;right:0;top:78px;background:#fff;padding:12px 20px;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+}
+@media(max-width:600px){
+  .grid,.requirements,.form-grid{grid-template-columns:1fr}
+  .wide{grid-column:span 1}
+  .topbar-inner{flex-direction:column;gap:2px}
+  .hero{padding-top:40px}
+  .search{flex-direction:column}
+  .search button{width:100%}
+  .admin{flex-direction:column;align-items:flex-start}
+  .full{grid-column:auto}
+}
+</style>
+</head>
+
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>SY 2026–2027 • Pareja Integrated School</span>
+    <span id="connectionStatus">Connecting to school portal…</span>
+  </div>
+</div>
+
+<header>
+  <div class="nav-inner" id="nav">
+    <a class="brand" href="#">
+      <div class="logo" aria-label="PIS">PIS</div>
+      <div>Pareja Integrated School<small>Digital Document Portal</small></div>
+    </a>
+    <button class="menu" onclick="toggleMenu()" aria-label="Open navigation">☰ Menu</button>
+    <nav>
+      <a href="#submit">Submit</a>
+      <a href="#requirements">What Do I Need?</a>
+      <a href="#resources">Templates & Guides</a>
+      <a href="#programs">Programs</a>
+      <a href="#updates">New Requirements</a>
+      <a href="#admin">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Simple school document management</div>
+    <h1>School Documents, Simplified.</h1>
+    <p>Submit. Track. Done.</p>
+    <div id="userBadge" class="user-badge hidden"></div>
+    <form class="search" onsubmit="searchPortal(event)">
+      <input id="searchInput" aria-label="Search documents, reports, or guides" placeholder="Search: lesson plan, ARAL, SBM, school forms…">
+      <button type="submit">🔎 Search</button>
+    </form>
+  </div>
+</section>
+
+<main class="container">
+
+<section class="section quick" id="submit">
+  <div class="section-head">
+    <div><h2>What would you like to do?</h2><p>Large, simple actions for everyday use.</p></div>
+  </div>
+  <div class="grid">
+    <a class="card" href="#" onclick="openSubmitModal();return false;">
+      <div class="icon">📤</div><h3>Submit a Document</h3><p>Upload a file</p>
+    </a>
+    <a class="card" href="#requirements">
+      <div class="icon">🔎</div><h3>What Do I Need?</h3><p>Find requirements</p>
+    </a>
+    <a class="card" href="#resources">
+      <div class="icon">📄</div><h3>Templates & Guides</h3><p>Forms & instructions</p>
+    </a>
+    <a class="card" href="#" onclick="openSubmissionsModal();return false;">
+      <div class="icon">📊</div><h3>My Submissions</h3><p>View status</p>
+    </a>
+  </div>
+</section>
+
+<section class="section" id="requirements">
+  <div class="section-head">
+    <div><h2>Requirements</h2><p id="requirementsSubtitle">Loading requirements from the school portal…</p></div>
+  </div>
+  <div class="requirements" id="reqGrid"></div>
+  <div id="noResults" class="no-results hidden">No matching portal item found.</div>
+</section>
+
+<section class="section" id="programs">
+  <div class="section-head"><div><h2>School Programs & Work Areas</h2><p>Programs and work areas</p></div></div>
+  <div class="grid">
+    <a class="card" href="#" onclick="openGuide('ARAL');return false;"><div class="icon">📚</div><h3>ARAL</h3><p>Learning recovery</p></a>
+    <a class="card" href="#" onclick="openGuide('SBM');return false;"><div class="icon">🧭</div><h3>SBM & Governance</h3><p>Governance documents</p></a>
+    <a class="card" href="#" onclick="openGuide('School Planning');return false;"><div class="icon">🗺️</div><h3>School Planning</h3><p>SIP • AIP • Monitoring</p></a>
+    <a class="card" href="#" onclick="openGuide('Professional Development');return false;"><div class="icon">👩‍🏫</div><h3>LAC & Professional Development</h3><p>LAC & training</p></a>
+    <a class="card" href="#" onclick="openGuide('School Programs');return false;"><div class="icon">🏫</div><h3>School Programs</h3><p>Active school programs</p></a>
+    <a class="card" href="#" onclick="openGuide('Reports');return false;"><div class="icon">📑</div><h3>Reports & Accomplishments</h3><p>Reports & accomplishments</p></a>
+  </div>
+</section>
+
+<section class="section" id="resources">
+  <div class="section-head"><div><h2>Templates & Guides</h2><p>Guides and templates</p></div></div>
+  <div class="notice"><strong>🔐 Private submissions • Authorized access only</strong><br>
+    Requirements and submission permissions are controlled by the school portal backend.
+  </div>
+</section>
+
+<section class="section" id="updates">
+  <div class="section-head"><div><h2>🆕 New Requirements</h2><p>Latest additions</p></div></div>
+  <div class="notice"><strong>🆕 New requirements will appear here.</strong></div>
+</section>
+
+<section class="section" id="admin">
+  <div class="admin">
+    <div><h2>School Administrator</h2><p>System management</p></div>
+    <button class="primary" onclick="openGuide('Administrator Sign-in')">Admin Sign-in</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div><strong>Pareja Integrated School</strong><br>Digital Document Portal • SY 2026–2027</div>
+    <div>GitHub frontend • Secure Google Apps Script backend</div>
+  </div>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="closeIfBackdrop(event)">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()" aria-label="Close">✕</button>
+    <h2 id="modalTitle">Portal</h2>
+    <div id="modalContent">
+      <p id="modalText">Loading…</p>
+    </div>
+    <div class="submit-row">
+      <button class="btn-secondary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  ============================================================
+  CONFIGURATION
+  ============================================================
+  Replace APPS_SCRIPT_WEB_APP_URL with your deployed Apps Script
+  Web App /exec URL.
+
+  The HTML never chooses a Drive folder. It sends only the
+  requirement ID and file data to the Apps Script backend.
+*/
+const APPS_SCRIPT_WEB_APP_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_EXEC_URL_HERE';
+
+let currentUser = null;
+let requirements = [];
+let lastSubmissionResult = null;
+
+/*
+  ============================================================
+  BACKEND COMMUNICATION
+  ============================================================
+*/
+async function callBackend(action, payload = {}) {
+  if (!APPS_SCRIPT_WEB_APP_URL || APPS_SCRIPT_WEB_APP_URL.includes('PASTE_YOUR')) {
+    throw new Error('Apps Script Web App URL has not been configured in this HTML.');
+  }
+
+  const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({action, payload})
+  });
+
+  const text = await response.text();
+  let data;
+
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    throw new Error('The Apps Script backend returned an unreadable response.');
+  }
+
+  if (!response.ok || data.success === false) {
+    throw new Error(data.message || 'The portal request failed.');
+  }
+
+  return data;
+}
+
+/*
+  ============================================================
+  PORTAL INITIALIZATION
+  ============================================================
+*/
+document.addEventListener('DOMContentLoaded', initializePortal);
+
+async function initializePortal() {
+  setConnectionStatus('Connecting…');
+
+  try {
+    const data = await callBackend('getPortalData');
+
+    currentUser = data.user || null;
+    requirements = Array.isArray(data.requirements) ? data.requirements : [];
+
+    renderUser();
+    renderRequirements(requirements);
+
+    setConnectionStatus('Connected to school portal');
+  } catch (error) {
+    console.error(error);
+    setConnectionStatus('Backend connection needs configuration');
+    renderRequirements([]);
+    document.getElementById('requirementsSubtitle').textContent =
+      'The portal interface is ready, but the Apps Script Web App connection is not configured yet.';
+  }
+}
+
+function setConnectionStatus(text) {
+  document.getElementById('connectionStatus').textContent = text;
+}
+
+function renderUser() {
+  const badge = document.getElementById('userBadge');
+
+  if (!currentUser) {
+    badge.classList.add('hidden');
+    return;
+  }
+
+  badge.innerHTML =
+    '<strong>' + escapeHtml(currentUser.FULL_NAME || 'Authorized user') + '</strong>' +
+    '<span>' +
+    escapeHtml(currentUser.PRIMARY_ROLE || '') +
+    (currentUser.EMAIL ? ' • ' + escapeHtml(currentUser.EMAIL) : '') +
+    '</span>';
+
+  badge.classList.remove('hidden');
+}
+
+/*
+  ============================================================
+  REQUIREMENTS
+  ============================================================
+*/
+function renderRequirements(items) {
+  const grid = document.getElementById('reqGrid');
+  const noResults = document.getElementById('noResults');
+
+  grid.innerHTML = '';
+
+  if (!items.length) {
+    noResults.classList.remove('hidden');
+    noResults.textContent = 'No requirements are currently available for this account.';
+    document.getElementById('requirementsSubtitle').textContent =
+      'No applicable requirements returned by the portal.';
+    return;
+  }
+
+  noResults.classList.add('hidden');
+  document.getElementById('requirementsSubtitle').textContent =
+    items.length + ' requirement' + (items.length === 1 ? '' : 's') + ' available to this account.';
+
+  items.forEach(requirement => {
+    const card = document.createElement('article');
+    card.className = 'card req';
+
+    const requirementId = String(requirement.REQUIREMENT_ID || '');
+    const name = String(requirement.REQUIREMENT_NAME || requirementId || 'Requirement');
+    const module = String(requirement.MODULE || requirement.PORTAL_SECTION || 'Portal');
+    const reference = String(requirement.OFFICIAL_REFERENCE || 'Current applicable guidance');
+    const privacy = String(requirement.PRIVACY || '');
+    const frequency = String(requirement.FREQUENCY || '');
+    const evidence = String(requirement.EVIDENCE_TYPE || '');
+
+    card.dataset.search = [
+      requirementId, name, module, reference, privacy, frequency, evidence
+    ].join(' ').toLowerCase();
+
+    card.innerHTML =
+      '<span class="tag">' + escapeHtml(module) + '</span>' +
+      '<h3>' + escapeHtml(name) + '</h3>' +
+      '<p>' + escapeHtml(evidence || 'School record') + '</p>' +
+      '<div class="meta">' +
+        (reference ? 'Basis: ' + escapeHtml(reference) : '') +
+        (frequency ? '<br>Frequency: ' + escapeHtml(frequency) : '') +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn-secondary" onclick="viewRequirement(\'' + jsString(requirementId) + '\')">View guide</button>' +
+        '<button class="primary" onclick="openSubmitModal(\'' + jsString(requirementId) + '\')">Submit</button>' +
+      '</div>' +
+      '<div class="req-actions-note">' + escapeHtml(privacy ? 'Access: ' + privacy : '') + '</div>';
+
+    grid.appendChild(card);
+  });
+}
+
+function viewRequirement(requirementId) {
+  const req = requirements.find(r => String(r.REQUIREMENT_ID || '').trim() === requirementId);
+
+  if (!req) {
+    openGuide('Requirement');
+    return;
+  }
+
+  const content =
+    '<p><strong>' + escapeHtml(req.REQUIREMENT_NAME || requirementId) + '</strong></p>' +
+    '<p><strong>Requirement ID:</strong> ' + escapeHtml(requirementId) + '</p>' +
+    '<p><strong>Module:</strong> ' + escapeHtml(req.MODULE || '') + '</p>' +
+    '<p><strong>Official reference:</strong> ' + escapeHtml(req.OFFICIAL_REFERENCE || 'Not specified') + '</p>' +
+    '<p><strong>Evidence type:</strong> ' + escapeHtml(req.EVIDENCE_TYPE || 'Not specified') + '</p>' +
+    '<p><strong>Frequency:</strong> ' + escapeHtml(req.FREQUENCY || 'Not specified') + '</p>' +
+    '<p>' + escapeHtml(req.NOTES || 'Use the current applicable school guidance.') + '</p>';
+
+  showModal('Requirement Guide', content);
+}
+
+/*
+  ============================================================
+  SUBMISSION
+  ============================================================
+*/
+function openSubmitModal(requirementId = '') {
+  const options = requirements.map(r => {
+    const id = String(r.REQUIREMENT_ID || '');
+    const name = String(r.REQUIREMENT_NAME || id);
+    const selected = id === requirementId ? ' selected' : '';
+    return '<option value="' + escapeHtml(id) + '"' + selected + '>' +
+           escapeHtml(id + ' — ' + name) + '</option>';
+  }).join('');
+
+  const content =
+    '<p>Choose an authorized requirement and upload your document. The server will determine the correct Drive destination.</p>' +
+    '<div class="form-field">' +
+      '<label for="requirementSelect">Requirement</label>' +
+      '<select id="requirementSelect">' +
+        '<option value="">Select a requirement</option>' + options +
+      '</select>' +
+    '</div>' +
+    '<div class="form-field">' +
+      '<label for="documentFile">Document</label>' +
+      '<input id="documentFile" type="file">' +
+    '</div>' +
+    '<div class="form-field">' +
+      '<label for="remarks">Remarks (optional)</label>' +
+      '<textarea id="remarks" placeholder="Add a short note if needed."></textarea>' +
+    '</div>' +
+    '<div id="submitStatus" class="status">Ready for submission.</div>' +
+    '<div class="submit-row">' +
+      '<button class="btn-secondary" onclick="closeModal()">Cancel</button>' +
+      '<button class="primary" id="submitButton" onclick="submitSelectedDocument()">Submit Document</button>' +
+    '</div>';
+
+  showModal('Submit a Document', content);
+}
+
+async function submitSelectedDocument() {
+  const button = document.getElementById('submitButton');
+  const status = document.getElementById('submitStatus');
+  const requirementId = document.getElementById('requirementSelect').value;
+  const fileInput = document.getElementById('documentFile');
+  const remarks = document.getElementById('remarks').value.trim();
+
+  if (!requirementId) {
+    setStatus(status, 'Please select a requirement.', 'error');
+    return;
+  }
+
+  if (!fileInput.files || !fileInput.files[0]) {
+    setStatus(status, 'Please choose a document.', 'error');
+    return;
+  }
+
+  const file = fileInput.files[0];
+
+  if (file.size > 20 * 1024 * 1024) {
+    setStatus(status, 'The selected file is larger than 20 MB.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Submitting…';
+  setStatus(status, 'Preparing secure submission…');
+
+  try {
+    const base64Data = await fileToBase64(file);
+
+    const data = await callBackend('submitDocument', {
+      fileName: file.name,
+      mimeType: file.type || 'application/octet-stream',
+      base64Data,
+      requirementId,
+      remarks
+    });
+
+    lastSubmissionResult = data.result || data;
+
+    setStatus(
+      status,
+      'Document submitted successfully.' +
+      (lastSubmissionResult.folderName ? ' Destination: ' + lastSubmissionResult.folderName : ''),
+      'success'
+    );
+
+    button.textContent = 'Submitted';
+
+  } catch (error) {
+    console.error(error);
+    setStatus(status, error.message || 'Submission failed.', 'error');
+    button.disabled = false;
+    button.textContent = 'Submit Document';
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.substring(comma + 1) : result);
+    };
+
+    reader.onerror = () => reject(new Error('The selected file could not be read.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+/*
+  ============================================================
+  SUBMISSIONS / GUIDES
+  ============================================================
+*/
+async function openSubmissionsModal() {
+  showModal(
+    'My Submissions',
+    '<p>Loading your submission history…</p>'
+  );
+
+  try {
+    const data = await callBackend('getMySubmissions');
+
+    const items = Array.isArray(data.submissions) ? data.submissions : [];
+
+    if (!items.length) {
+      showModal(
+        'My Submissions',
+        '<p>No submission records are currently available.</p>'
+      );
+      return;
+    }
+
+    const rows = items.map(item =>
+      '<div class="card" style="margin-bottom:10px;padding:14px">' +
+        '<strong>' + escapeHtml(item.fileName || item.FILE_NAME || 'Document') + '</strong>' +
+        '<div class="meta">' +
+          escapeHtml(item.requirementName || item.REQUIREMENT_NAME || '') +
+          '<br>' +
+          escapeHtml(item.status || item.STATUS || 'Submitted') +
+        '</div>' +
+      '</div>'
+    ).join('');
+
+    showModal('My Submissions', rows);
+
+  } catch (error) {
+    showModal(
+      'My Submissions',
+      '<div class="status error">' + escapeHtml(error.message) + '</div>'
+    );
+  }
+}
+
+function openGuide(title) {
+  showModal(
+    title,
+    '<p>This portal area is connected to the school document system.</p>' +
+    '<p>Access to requirements, records, and submissions is controlled by the user account, role, assignments, and server-side access rules.</p>'
+  );
+}
+
+/*
+  ============================================================
+  UI HELPERS
+  ============================================================
+*/
+function toggleMenu() {
+  document.getElementById('nav').classList.toggle('open');
+}
+
+function showModal(title, content) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalContent').innerHTML = content;
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function closeIfBackdrop(e) {
+  if (e.target.id === 'modal') closeModal();
+}
+
+function setStatus(element, message, type = '') {
+  element.className = 'status' + (type ? ' ' + type : '');
+  element.textContent = message;
+}
+
+function searchPortal(e) {
+  e.preventDefault();
+
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const cards = [...document.querySelectorAll('.req')];
+  let count = 0;
+
+  cards.forEach(card => {
+    const match = !q || card.dataset.search.includes(q);
+    card.style.display = match ? '' : 'none';
+    if (match) count++;
+  });
+
+  document.getElementById('noResults').classList.toggle('hidden', count !== 0);
+  document.getElementById('requirements').scrollIntoView({behavior:'smooth'});
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+
+function jsString(value) {
+  return String(value ?? '')
+    .replaceAll('\\','\\\\')
+    .replaceAll("'","\\'");
+}
+</script>
+</body>
+</html>
