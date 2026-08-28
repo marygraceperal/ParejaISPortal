@@ -252,32 +252,75 @@ let lastSubmissionResult = null;
   ============================================================
 */
 async function callBackend(action, payload = {}) {
-  if (!APPS_SCRIPT_WEB_APP_URL || APPS_SCRIPT_WEB_APP_URL.includes('PASTE_YOUR')) {
-    throw new Error('Apps Script Web App URL has not been configured in this HTML.');
+
+  if (
+    !APPS_SCRIPT_WEB_APP_URL ||
+    APPS_SCRIPT_WEB_APP_URL.includes('PASTE_YOUR')
+  ) {
+    throw new Error(
+      'Apps Script Web App URL has not been configured in this HTML.'
+    );
   }
 
-  const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
-    method: 'POST',
-    headers: {'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({action, payload})
-  });
+  const response = await fetch(
+    APPS_SCRIPT_WEB_APP_URL,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        action: action,
+        payload: payload
+      })
+    }
+  );
 
   const text = await response.text();
+
   let data;
 
   try {
+
     data = JSON.parse(text);
-  } catch (err) {
-    throw new Error('The Apps Script backend returned an unreadable response.');
+
+  } catch (error) {
+
+    console.error(
+      'Apps Script response:',
+      text
+    );
+
+    throw new Error(
+      'The Apps Script backend returned an unreadable response.'
+    );
   }
 
-  if (!response.ok || data.success === false) {
-    throw new Error(data.message || 'The portal request failed.');
+  if (
+    !response.ok ||
+    data.success === false
+  ) {
+
+    throw new Error(
+      data.message ||
+      'The portal request failed.'
+    );
   }
+
+  /*
+   * Return the complete backend response.
+   *
+   * This allows existing code such as:
+   *
+   * data.user
+   * data.requirements
+   * data.result
+   *
+   * to continue working.
+   */
 
   return data;
 }
-
 /*
   ============================================================
   PORTAL INITIALIZATION
