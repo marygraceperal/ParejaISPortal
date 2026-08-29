@@ -343,7 +343,7 @@ async function initializePortal() {
     setConnectionStatus('Connected to school portal');
   } catch (error) {
     console.error(error);
-    setConnectionStatus('Backend connection needs configuration');
+    setConnectionStatus('Connection error: ' + (error.message || 'Unknown error'));
     renderRequirements([]);
     document.getElementById('requirementsSubtitle').textContent =
       'The portal interface is ready, but the Apps Script Web App connection is not configured yet.';
