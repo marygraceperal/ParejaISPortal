@@ -333,21 +333,45 @@ async function initializePortal() {
   setConnectionStatus('Connecting…');
 
   try {
-    const data = await callBackend('getPortalData');
+  const response = await fetch(
+    APPS_SCRIPT_WEB_APP_URL + '?action=getPortalData',
+    {
+      method: 'GET'
+    }
+  );
 
-    currentUser = data.user || null;
-    requirements = Array.isArray(data.requirements) ? data.requirements : [];
+  if (!response.ok) {
+    throw new Error(
+      'Portal backend returned HTTP ' + response.status
+    );
+  }
 
-    renderUser();
-    renderRequirements(requirements);
+  const data = await response.json();
 
-    setConnectionStatus('Connected to school portal');
+  if (data.success === false) {
+    throw new Error(
+      data.message || 'Portal request failed.'
+    );
+  }
+
+  const portalData = data.result || {};
+
+  currentUser = portalData.user || null;
+
+  requirements = Array.isArray(portalData.requirements)
+    ? portalData.requirements
+    : [];
+
+  renderUser();
+  renderRequirements(requirements);
+
+  setConnectionStatus('Connected to school portal');
   } catch (error) {
     console.error(error);
     setConnectionStatus('Connection error: ' + (error.message || 'Unknown error'));
     renderRequirements([]);
     document.getElementById('requirementsSubtitle').textContent =
-      'The portal interface is ready, but the Apps Script Web App connection is not configured yet.';
+      'The portal could not connect to the Apps Script backend.';
   }
 }
 
