@@ -333,45 +333,38 @@ async function initializePortal() {
   setConnectionStatus('Connecting…');
 
   try {
-  const response = await fetch(
-    APPS_SCRIPT_WEB_APP_URL + '?action=getPortalData',
-    {
-      method: 'GET'
-    }
-  );
+    const url =
+      APPS_SCRIPT_WEB_APP_URL +
+      '?action=getPortalData';
 
-  if (!response.ok) {
-    throw new Error(
-      'Portal backend returned HTTP ' + response.status
-    );
-  }
+    console.log('Opening portal backend:', url);
 
-  const data = await response.json();
+    /*
+     * Open the Apps Script Web App directly.
+     *
+     * We are testing the backend connection without
+     * using JavaScript fetch(), which is currently being
+     * blocked by the browser.
+     */
+    window.location.href = url;
 
-  if (data.success === false) {
-    throw new Error(
-      data.message || 'Portal request failed.'
-    );
-  }
-
-  const portalData = data.result || {};
-
-  currentUser = portalData.user || null;
-
-  requirements = Array.isArray(portalData.requirements)
-    ? portalData.requirements
-    : [];
-
-  renderUser();
-  renderRequirements(requirements);
-
-  setConnectionStatus('Connected to school portal');
   } catch (error) {
-    console.error(error);
-    setConnectionStatus('Connection error: ' + (error.message || 'Unknown error'));
+    console.error('Portal connection error:', error);
+
+    setConnectionStatus(
+      'Connection error: ' +
+      (error.message || 'Unknown error')
+    );
+
     renderRequirements([]);
-    document.getElementById('requirementsSubtitle').textContent =
-      'The portal could not connect to the Apps Script backend.';
+
+    const subtitle =
+      document.getElementById('requirementsSubtitle');
+
+    if (subtitle) {
+      subtitle.textContent =
+        'The portal could not connect to the Apps Script backend.';
+    }
   }
 }
 
