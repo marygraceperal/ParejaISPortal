@@ -261,7 +261,8 @@ async function callBackend(action, payload = {}) {
       'Apps Script Web App URL has not been configured in this HTML.'
     );
   }
-
+console.log('Calling Apps Script:', APPS_SCRIPT_WEB_APP_URL);
+  
   const response = await fetch(
     APPS_SCRIPT_WEB_APP_URL,
     {
