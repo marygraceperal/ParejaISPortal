@@ -329,44 +329,178 @@ console.log('Calling Apps Script:', APPS_SCRIPT_WEB_APP_URL);
 */
 document.addEventListener('DOMContentLoaded', initializePortal);
 
-async function initializePortal() {
+function initializePortal() {
+
   setConnectionStatus('Connecting…');
 
-  try {
+  loadPortalData()
+    .then(function(data) {
+
+      if (
+        !data ||
+        data.success === false
+      ) {
+        throw new Error(
+          data && data.message
+            ? data.message
+            : 'Portal request failed.'
+        );
+      }
+
+      const portalData =
+        data.result || {};
+
+      currentUser =
+        portalData.user || null;
+
+      requirements =
+        Array.isArray(
+          portalData.requirements
+        )
+          ? portalData.requirements
+          : [];
+
+      renderUser();
+
+      renderRequirements(
+        requirements
+      );
+
+      setConnectionStatus(
+        'Connected to school portal'
+      );
+
+      const subtitle =
+        document.getElementById(
+          'requirementsSubtitle'
+        );
+
+      if (subtitle) {
+        subtitle.textContent =
+          'Your school portal data has been loaded successfully.';
+      }
+
+    })
+    .catch(function(error) {
+
+      console.error(
+        'Portal connection error:',
+        error
+      );
+
+      setConnectionStatus(
+        'Connection error: ' +
+        (
+          error.message ||
+          'Unknown error'
+        )
+      );
+
+      renderRequirements([]);
+
+      const subtitle =
+        document.getElementById(
+          'requirementsSubtitle'
+        );
+
+      if (subtitle) {
+        subtitle.textContent =
+          'The portal could not connect to the Apps Script backend.';
+      }
+
+    });
+}
+
+
+/*
+  ============================================================
+  LOAD PORTAL DATA
+  ============================================================
+*/
+
+function loadPortalData() {
+
+  return new Promise(function(resolve, reject) {
+
+    const callbackName =
+      'portalCallback_' +
+      Date.now() +
+      '_' +
+      Math.floor(
+        Math.random() * 100000
+      );
+
+    const script =
+      document.createElement('script');
+
     const url =
       APPS_SCRIPT_WEB_APP_URL +
-      '?action=getPortalData';
+      '?action=getPortalData' +
+      '&callback=' +
+      encodeURIComponent(
+        callbackName
+      );
 
-    console.log('Opening portal backend:', url);
+    window[callbackName] =
+      function(data) {
 
-    /*
-     * Open the Apps Script Web App directly.
-     *
-     * We are testing the backend connection without
-     * using JavaScript fetch(), which is currently being
-     * blocked by the browser.
-     */
-    window.location.href = url;
+        cleanup();
 
-  } catch (error) {
-    console.error('Portal connection error:', error);
+        if (
+          data &&
+          data.success === false
+        ) {
 
-    setConnectionStatus(
-      'Connection error: ' +
-      (error.message || 'Unknown error')
-    );
+          reject(
+            new Error(
+              data.message ||
+              'Portal request failed.'
+            )
+          );
 
-    renderRequirements([]);
+          return;
+        }
 
-    const subtitle =
-      document.getElementById('requirementsSubtitle');
+        resolve(data);
+      };
 
-    if (subtitle) {
-      subtitle.textContent =
-        'The portal could not connect to the Apps Script backend.';
+    script.onerror =
+      function() {
+
+        cleanup();
+
+        reject(
+          new Error(
+            'Unable to reach the Apps Script Web App.'
+          )
+        );
+      };
+
+    function cleanup() {
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(
+          script
+        );
+      }
+
+      try {
+        delete window[callbackName];
+      } catch (error) {
+        window[callbackName] =
+          undefined;
+      }
     }
-  }
+
+    script.src = url;
+
+    document
+      .head
+      .appendChild(script);
+
+  });
 }
+
 
 function setConnectionStatus(text) {
   document.getElementById('connectionStatus').textContent = text;
