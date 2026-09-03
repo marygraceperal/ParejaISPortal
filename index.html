@@ -415,115 +415,60 @@ function initializePortal() {
 /*
   ============================================================
   LOAD PORTAL DATA
+  Uses POST → Apps Script doPost(e)
   ============================================================
 */
 
 function loadPortalData() {
 
-  return new Promise(function(resolve, reject) {
+  return fetch(
+    APPS_SCRIPT_WEB_APP_URL,
+    {
+      method: 'POST',
 
-    const callbackName =
-      'portalCallback_' +
-      Date.now() +
-      '_' +
-      Math.floor(
-        Math.random() * 100000
+      headers: {
+        'Content-Type':
+          'text/plain;charset=utf-8'
+      },
+
+      body: JSON.stringify({
+        action: 'getPortalData',
+        payload: {}
+      })
+    }
+  )
+  .then(function(response) {
+
+    if (!response.ok) {
+      throw new Error(
+        'Server returned HTTP ' +
+        response.status
       );
-
-    const script =
-      document.createElement('script');
-
-    const url =
-      APPS_SCRIPT_WEB_APP_URL +
-      '?action=getPortalData' +
-      '&callback=' +
-      encodeURIComponent(
-        callbackName
-      );
-
-    window[callbackName] =
-      function(data) {
-
-        cleanup();
-
-        if (
-          data &&
-          data.success === false
-        ) {
-
-          reject(
-            new Error(
-              data.message ||
-              'Portal request failed.'
-            )
-          );
-
-          return;
-        }
-
-        resolve(data);
-      };
-
-    script.onerror =
-      function() {
-
-        cleanup();
-
-        reject(
-          new Error(
-            'Unable to reach the Apps Script Web App.'
-          )
-        );
-      };
-
-    function cleanup() {
-
-      if (script.parentNode) {
-        script.parentNode.removeChild(
-          script
-        );
-      }
-
-      try {
-        delete window[callbackName];
-      } catch (error) {
-        window[callbackName] =
-          undefined;
-      }
     }
 
-    script.src = url;
+    return response.json();
 
-    document
-      .head
-      .appendChild(script);
+  })
+  .then(function(data) {
+
+    if (
+      !data ||
+      data.success === false
+    ) {
+
+      throw new Error(
+        data && data.message
+          ? data.message
+          : 'Portal request failed.'
+      );
+
+    }
+
+    return data;
 
   });
+
 }
-
-
-function setConnectionStatus(text) {
-  document.getElementById('connectionStatus').textContent = text;
-}
-
-function renderUser() {
-  const badge = document.getElementById('userBadge');
-
-  if (!currentUser) {
-    badge.classList.add('hidden');
-    return;
-  }
-
-  badge.innerHTML =
-    '<strong>' + escapeHtml(currentUser.FULL_NAME || 'Authorized user') + '</strong>' +
-    '<span>' +
-    escapeHtml(currentUser.PRIMARY_ROLE || '') +
-    (currentUser.EMAIL ? ' • ' + escapeHtml(currentUser.EMAIL) : '') +
-    '</span>';
-
-  badge.classList.remove('hidden');
-}
-
 /*
   ============================================================
   REQUIREMENTS
