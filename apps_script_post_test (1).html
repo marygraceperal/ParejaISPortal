@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apps Script POST Connection Test</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:760px;margin:40px auto;padding:20px;line-height:1.5}
+.box{padding:16px;border:1px solid #ccc;border-radius:10px;margin:16px 0}
+pre{white-space:pre-wrap;word-break:break-word;background:#f5f5f5;padding:14px;border-radius:8px}
+button{padding:12px 18px;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>Apps Script POST Connection Test</h1>
+<p>This page tests only the POST connection to the Pareja IS Portal Apps Script backend.</p>
+
+<div class="box"><strong>Apps Script URL:</strong><pre id="url"></pre></div>
+<button id="testButton">Test POST Connection</button>
+<div class="box"><strong>Status:</strong><pre id="status">Not tested yet.</pre></div>
+<div class="box"><strong>Response / Error:</strong><pre id="result">Waiting for test...</pre></div>
+
+<script>
+const APPS_SCRIPT_WEB_APP_URL =
+'https://script.google.com/macros/s/AKfycbwoG1DxscQ9UYfU4x_4E7zaGbMWgrBtaUuHxxiWS1mKhkUPvCLplJIyobjn6IDS2dHUYQ/exec';
+
+document.getElementById('url').textContent = APPS_SCRIPT_WEB_APP_URL;
+document.getElementById('testButton').addEventListener('click', testPost);
+
+async function testPost() {
+  const status = document.getElementById('status');
+  const result = document.getElementById('result');
+
+  status.textContent = 'Sending POST request...';
+  result.textContent = '';
+
+  try {
+    const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'getPortalData', payload:{}})
+    });
+
+    status.textContent =
+      'HTTP status: ' + response.status + ' | OK: ' + response.ok;
+
+    result.textContent = await response.text() || '(empty response)';
+  } catch (error) {
+    status.textContent = 'POST FAILED';
+    result.textContent =
+      'Name: ' + (error.name || 'Unknown') +
+      '\nMessage: ' + (error.message || 'Unknown error');
+  }
+}
+</script>
+</body>
+</html>
